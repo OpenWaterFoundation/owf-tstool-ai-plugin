@@ -1,0 +1,3 @@
+# Repositories that comprise TSTool timesheets.com plugin:
+# - the main TSTool list also needs to be checked
+owf-tstool-timesheetscom-plugin

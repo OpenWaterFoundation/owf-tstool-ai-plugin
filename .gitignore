@@ -1,0 +1,33 @@
+# List of files to ignore globally in the repository.
+
+# Temporary editor files.
+
+*.swp
+*.swo
+
+# Java compiled class files.
+
+*.class
+
+# Installers and transfer files.
+
+*.tar.gz
+*.tar
+*.war
+
+# Ignore the MkDocs siete folder.
+
+/doc-user-mkdocs-project/site/**
+
+# Log files for testing, etc.
+
+*.log
+
+# Distribution builds.
+
+/dist/**
+!/dist/README.md
+
+# Target files created by Eclipse/Maven.
+
+/owf-tstool-timesheetscom-plugin/target/**
