@@ -1,5 +1,7 @@
 # OWF TSTool AI Plugin Documentation
 
+[Background](#background) | [Defining the Problem Domain](#defining-the-problem-domain) | [Reviewing and Processing the Input Data](#reviewing-and-processing-the-input-data) | [Configuring the Model](#configuring-the-model) | [Evaluating the Model](#evaluating-the-model) | [Using the Model](#using-the-model)
+
 ## Background
 The OWF TSTool AI Plugin is designed to implement Time series forcasting for Water levels using an Custom Deepar LSTM model. 
 The goal is to predict future water levels flood warings and to provide insights into water level trends without the need for traditional modeling of a mathematical and physical model.
@@ -7,6 +9,7 @@ To get current future and historical Weather data, we used the open-meteo.com/ A
 We used TSTool to get the historical water level data from the database.
 For the model training and data preprocessing, we used the Python programming language and the PyTorch library.
 The plugin is writen in Java and the model ist deployed using DJL (Deep Java Library).
+
 ## Defining the Problem Domain
 The problem domain is to predict future water levels based on historical data and weather conditions. For this to work we need to get the correct data for each location. So it would work as follows:
 1. Select a water level sation that is of interest from the TSTool database.
@@ -15,6 +18,7 @@ The problem domain is to predict future water levels based on historical data an
 4. Preprocess the data to make everything in the same hourly time steps and remove any missing values.
 5. Use the preprocessed data to train the model.
 6. Once the model is trained, it can be used to predict future water levels based on current and historical weather data and historical water levels.
+
 ## Reviewing and processing the input data
 The input data is both in the json format and needs to be preprocced to have a regular hourly time step and to convert the data into .npy a format used by numpy and PyTorch to store the data as binary files for efficient loading.
 ## Configuring the model
