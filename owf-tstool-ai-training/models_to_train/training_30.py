@@ -71,7 +71,7 @@ class MultiHeadAttention(nn.Module):
 
 class ImprovedWaterLevelModel(nn.Module):
     """Improved water level forecasting model with attention and residual connections"""
-    def __init__(self, weather_features, hidden_size=128, num_layers=3, dropout=0.2):
+    def __init__(self, weather_features, hidden_size=128, num_layers=3, dropout=0.4):
         super().__init__()
         
         self.weather_features = weather_features
@@ -350,7 +350,7 @@ def main():
     val_losses = []
     best_val_loss = float('inf')
     best_metrics = None
-    patience = 20
+    patience = 5
     patience_counter = 0
     
     print("Starting training...")
