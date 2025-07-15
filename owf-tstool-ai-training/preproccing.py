@@ -324,10 +324,10 @@ def plot_data_overview(weather_df, water_df, save_path='data_overview.png'):
 def main():
     # Load data
     print("Loading weather data...")
-    weather_df = load_weather_data('owf-tstool-ai-training/weather_data.json')
+    weather_df = load_weather_data('weather_data.json')
     
     print("Loading water level data...")
-    water_df = load_water_level_data('owf-tstool-ai-training/water_data.json')
+    water_df = load_water_level_data('water_data.json')
     
     # Resample water level data to hourly
     print("Resampling water level data to hourly...")
