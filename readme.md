@@ -9,6 +9,7 @@ See the following online resources:
 
 *   [TSTool User Documentation](https://opencdss.state.co.us/tstool/latest/doc-user/)
 *   [TSTool Developer Documentation](https://opencdss.state.co.us/tstool/latest/doc-dev/)
+*   [OWF TSTool AI Plugin Documentation](/doc/documentation.md)
 
 
 See the following sections in this page:
