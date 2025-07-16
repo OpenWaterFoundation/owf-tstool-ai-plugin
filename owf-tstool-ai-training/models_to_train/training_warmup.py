@@ -339,10 +339,6 @@ def main():
         dropout=0.4
     ).to(device)
     
-    # Initialize optimizer and loss
-    criterion = create_model_with_proper_loss()
-    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
     
     # Training parameters
     num_epochs = 60
@@ -352,6 +348,25 @@ def main():
     best_metrics = None
     patience = 3
     patience_counter = 0
+    
+    # Initialize optimizer and loss
+    criterion = create_model_with_proper_loss()
+    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
+    # Warm-up for 5 epochs
+    warmup_epochs = 5
+    main_epochs = num_epochs - warmup_epochs
+
+    warmup_scheduler = optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, total_iters=warmup_epochs)
+    cosine_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=main_epochs, eta_min=1e-6)
+
+    scheduler = optim.lr_scheduler.SequentialLR(
+        optimizer,
+        schedulers=[warmup_scheduler, cosine_scheduler],
+        milestones=[warmup_epochs]
+    )
+
+    
+    
     
     print("Starting training...")
     for epoch in range(num_epochs):

@@ -71,7 +71,7 @@ class MultiHeadAttention(nn.Module):
 
 class ImprovedWaterLevelModel(nn.Module):
     """Improved water level forecasting model with attention and residual connections"""
-    def __init__(self, weather_features, hidden_size=128, num_layers=3, dropout=0.4):
+    def __init__(self, weather_features, hidden_size=96, num_layers=2, dropout=0.5):
         super().__init__()
         
         self.weather_features = weather_features
@@ -334,14 +334,14 @@ def main():
     
     model = ImprovedWaterLevelModel(
         weather_features=len(feature_names),
-        hidden_size=128,
-        num_layers=3,
-        dropout=0.4
+        hidden_size=96,
+        num_layers=2,
+        dropout=0.5
     ).to(device)
     
     # Initialize optimizer and loss
     criterion = create_model_with_proper_loss()
-    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
+    optimizer = optim.AdamW(model.parameters(), lr=0.0005, weight_decay=1e-3)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
     
     # Training parameters
