@@ -345,7 +345,7 @@ def main():
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
     
     # Training parameters
-    num_epochs = 30
+    num_epochs = 60
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
