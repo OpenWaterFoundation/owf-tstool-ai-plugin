@@ -1,0 +1,3 @@
+# Repositories that comprise TSTool AI plugin:
+# - the main TSTool list also needs to be checked
+owf-tstool-ai-plugin
