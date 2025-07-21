@@ -8,7 +8,7 @@ Comment07: Class-Path contains the dep/ folder for dependency jar files.
 Comment08: For this plugin dependencies are ? Maven jar files.
 manifest-Version: 1.0
 Plugin-Name: owf-tstool-ai-plugin
-Plugin-Version: 1.0.1
+Plugin-Version: 1.0.0
 TSTool-Version: >= 15.0.0
 Command-Class1: org.openwaterfoundation.tstool.plugin.ai.
  commands.RunAiForecastModel_Command
