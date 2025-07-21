@@ -1,0 +1,16 @@
+Comment01: Manifest file to distribute with the
+Comment02: owf-tstool-ai-plugin.jar file.
+Comment03: Maximum line length is 72 characters to avoid truncation.
+Comment04: Indent continued lines by a single space.
+Comment05: Command-Class1 is the path to a command class.
+Comment06: Increment the number as needed for the number of command classes.
+Comment07: Class-Path contains the dep/ folder for dependency jar files.
+Comment08: For this plugin dependencies are ? Maven jar files.
+manifest-Version: 1.0
+Plugin-Name: owf-tstool-ai-plugin
+Plugin-Version: 1.0.1
+TSTool-Version: >= 15.0.0
+Command-Class1: org.openwaterfoundation.tstool.plugin.ai.
+ commands.RunAiForecastModel_Command
+Class-Path: dep/
+
