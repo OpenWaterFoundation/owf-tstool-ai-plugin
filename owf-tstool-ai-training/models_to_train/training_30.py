@@ -334,8 +334,8 @@ def main():
     
     model = ImprovedWaterLevelModel(
         weather_features=len(feature_names),
-        hidden_size=96,
-        num_layers=3,
+        hidden_size=32,
+        num_layers=5,
         dropout=0.25
     ).to(device)
     

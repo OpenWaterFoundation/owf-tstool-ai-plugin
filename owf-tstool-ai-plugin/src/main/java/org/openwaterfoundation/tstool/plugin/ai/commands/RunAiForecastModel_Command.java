@@ -25,6 +25,26 @@ NoticeEnd */
 package org.openwaterfoundation.tstool.plugin.ai.commands;
 
 import java.io.File;
+
+
+import ai.djl.Model;
+import ai.djl.engine.Engine;
+import ai.djl.inference.Predictor;
+import ai.djl.ndarray.*;
+import ai.djl.ndarray.types.Shape;
+import ai.djl.translate.*;
+import ai.djl.modality.Input;
+import ai.djl.modality.Output;
+import ai.djl.ndarray.types.DataType;
+import ai.djl.pytorch.engine.PtEngineProvider;
+import ai.djl.pytorch.engine.PtEngine;
+
+
+import java.nio.file.Paths;
+
+
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,11 +210,13 @@ Run the command.
 */
 public void runCommand ( int command_number )
 throws InvalidCommandParameterException, CommandWarningException, CommandException {
-	String routine = getClass().getSimpleName() + ".runCommand", message;
-	int warning_level = 2;
-	int log_level = 3; // Level for non-user messages for log file.
-	String command_tag = "" + command_number;
-	int warning_count = 0;
+    
+    String routine = getClass().getSimpleName() + ".runCommand", message;
+    int warning_level = 2;
+    int log_level = 3; // Level for non-user messages for log file.
+    String command_tag = "" + command_number;
+    int warning_count = 0;
+
 
     // Clear the output file.
 
@@ -216,7 +238,9 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
     }
     if ( clearStatus ) {
 		status.clearLog(CommandPhaseType.RUN);
+
 	}
+  
 
     String InputFile = parameters.getValue ( "InputFile" );
 	InputFile = TSCommandProcessorUtil.expandParameterValue(processor,this,InputFile);
@@ -248,24 +272,93 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
 	}
 
 	// Run the forecast model.
-	try {
-		
-		// Ortwin add code here.
-		Message.printStatus(2, routine, "I'm here.");
-		
-	}
-	catch ( Exception e ) {
-		message = "Unexpected error running the model (" + e + ").";
-		Message.printWarning ( warning_level,
-		MessageUtil.formatMessageTag(command_tag, ++warning_count),routine, message );
-		Message.printWarning ( 3, routine, e );
-		status.addToLog(CommandPhaseType.RUN,
-				new CommandLogRecord(CommandStatusType.FAILURE,
-					message, "See the log file for details.  Make sure the output file is not open in other software."));
-		throw new CommandException ( message );
-	}
+    System.out.println("here starts the try catch for the ai");
+    Message.printDebug(3, "ai", "ai starts");
+    
+    try {
+        
 
-	status.refreshPhaseSeverity(CommandPhaseType.RUN,CommandStatusType.SUCCESS);
+        // Explicitly load the PtEngine class. Its static initializer will register
+        // the engine, bypassing the ServiceLoader issues in the plugin environment.
+        try {
+        	 System.out.println("Attempting to explicitly load PyTorch engine...");
+
+            String cacheDir = System.getProperty("user.home") + File.separator + ".djl.ai";
+            System.setProperty("ai.djl.repository.zoo.location", cacheDir);
+            System.out.println("DJL cache directory set to: " + cacheDir);
+            
+            
+            
+            // Try to explicitly register the PyTorch engine
+            PtEngineProvider provider = new PtEngineProvider();
+            Engine engine = provider.getEngine();
+            
+            if (engine == null) {
+                throw new RuntimeException("Failed to get PyTorch engine from provider");
+            }
+            
+            System.out.println("Successfully loaded PyTorch engine: " + engine.getEngineName() + " (Version: " + engine.getVersion() + ")");
+            
+        } catch (Exception e) {
+            message = "PyTorch engine failed to initialize: " + e.getMessage();
+            Message.printWarning(3, routine, e);
+            throw new CommandException(message);
+        }
+
+        int seq_len = 10;
+        int weather_features = 12;
+
+        try (Model model = Model.newInstance("water_level_model")) {
+            // Path needs to be a Path object
+            model.load(Paths.get("C:\\Users\\Ortwin\\cdss-dev\\TSTool\\git-repos\\owf-tstool-ai-plugin\\owf-tstool-ai-plugin\\src\\main\\resources")); 
+
+            Translator<NDList, NDArray> translator = new Translator<NDList, NDArray>() {
+                @Override
+                public NDArray processOutput(TranslatorContext ctx, NDList list) {
+                    System.out.println("Processing model output.");
+                    return list.singletonOrThrow();
+                }
+
+                @Override
+                public NDList processInput(TranslatorContext ctx, NDList input) {
+                    return input;
+                }
+
+                @Override
+                public Batchifier getBatchifier() {
+                    return null;
+                }
+            };
+
+            try (NDManager manager = NDManager.newBaseManager();
+                 Predictor<NDList, NDArray> predictor = model.newPredictor(translator)) {
+
+                NDArray historical = manager.randomNormal(0, 1, new Shape(1, seq_len, weather_features + 1), DataType.FLOAT32);
+                NDArray futureWeather = manager.randomNormal(0, 1, new Shape(1, seq_len, weather_features), DataType.FLOAT32);
+
+                NDList input = new NDList(historical, futureWeather);
+                NDArray output = predictor.predict(input);
+
+                System.out.println("Model prediction output:");
+                System.out.println(output);
+            }
+        }
+        
+        Message.printStatus(2, routine, "AI Model run completed successfully.");
+        
+    }
+    catch ( Exception e ) {
+        message = "Unexpected error running the model (" + e.getMessage() + ").";
+        Message.printWarning ( warning_level,
+        MessageUtil.formatMessageTag(command_tag, ++warning_count),routine, message );
+        Message.printWarning ( 3, routine, e );
+        status.addToLog(CommandPhaseType.RUN,
+                new CommandLogRecord(CommandStatusType.FAILURE,
+                        message, "See the log file for details. Make sure the output file is not open in other software."));
+        throw new CommandException ( message ); // FIX: Use single-argument constructor
+    }
+
+    status.refreshPhaseSeverity(CommandPhaseType.RUN,CommandStatusType.SUCCESS);
 }
 
 /**

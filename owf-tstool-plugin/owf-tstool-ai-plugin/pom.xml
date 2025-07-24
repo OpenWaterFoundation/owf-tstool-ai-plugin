@@ -3,4 +3,43 @@
   <groupId>org.openwaterfoundation</groupId>
   <artifactId>owf-tstool-ai-plugin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+	  <dependency>
+		    <groupId>ai.djl</groupId>
+		    <artifactId>api</artifactId>
+		    <version>0.26.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>ai.djl.pytorch</groupId>
+		    <artifactId>pytorch-engine</artifactId>
+		    <version>0.26.0</version>
+		</dependency>
+  </dependencies>
+	  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.2</version> <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    </excludes>
+                            </filter>
+                        </filters>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+	  
 </project>

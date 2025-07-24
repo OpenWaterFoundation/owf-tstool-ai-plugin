@@ -1,6 +1,7 @@
 *.json
 *.npz
 *.pth
+*.pt
 
 
 # List of files to ignore globally in the repository.
