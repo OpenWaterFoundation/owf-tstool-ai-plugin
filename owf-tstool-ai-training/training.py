@@ -334,9 +334,9 @@ def main():
     
     model = ImprovedWaterLevelModel(
         weather_features=len(feature_names),
-        hidden_size=128,
-        num_layers=2,
-        dropout=0.2
+        hidden_size=64,
+        num_layers=3,
+        dropout=0.3
     ).to(device)
     
     # Initialize optimizer and loss
@@ -345,12 +345,12 @@ def main():
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
     
     # Training parameters
-    num_epochs = 30
+    num_epochs = 60
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
     best_metrics = None
-    patience = 5
+    patience = 3
     patience_counter = 0
     
     print("Starting training...")
