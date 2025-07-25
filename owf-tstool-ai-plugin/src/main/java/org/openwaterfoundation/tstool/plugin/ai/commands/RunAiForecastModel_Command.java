@@ -216,7 +216,7 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
     int log_level = 3; // Level for non-user messages for log file.
     String command_tag = "" + command_number;
     int warning_count = 0;
-
+    CommandPhaseType commandPhase = CommandPhaseType.RUN;
 
     // Clear the output file.
 
@@ -272,35 +272,58 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
 	}
 
 	// Run the forecast model.
-    System.out.println("here starts the try catch for the ai");
-    Message.printDebug(3, "ai", "ai starts");
+    Message.printStatus(2, routine,"Here starts the try catch for the ai.");
     
     try {
-        
-
         // Explicitly load the PtEngine class. Its static initializer will register
         // the engine, bypassing the ServiceLoader issues in the plugin environment.
         try {
-        	 System.out.println("Attempting to explicitly load PyTorch engine...");
+        	Message.printStatus(2,routine,"Attempting to load the PyTorch engine...");
 
-            String cacheDir = System.getProperty("user.home") + File.separator + ".djl.ai";
+        	// Set the cache folder:
+        	// - currently default to a standard location
+       		// - may change this later to be a command parameter to allow customization
+        	String cacheDir = null;
+            if ( IOUtil.isUNIXMachine() ) {
+            	// Use a temporary folder that is unique for TSTool and the user:
+            	cacheDir = "/tmp/" + System.getProperty("user.name") + "/TSTool/djl.ai";
+            }
+            else {
+            	// Windows.
+            	cacheDir = System.getProperty("user.home") + File.separator
+            		+ "AppData" + File.separatorChar
+            		+ "Local" + File.separator
+            		+ "TSTool" + File.separator
+            		+ "djl.ai";
+            }
             System.setProperty("ai.djl.repository.zoo.location", cacheDir);
-            System.out.println("DJL cache directory set to: " + cacheDir);
+            Message.printStatus(2, routine, "DJL cache directory set to: " + cacheDir);
             
-            
-            
-            // Try to explicitly register the PyTorch engine
+            // Try to explicitly register the PyTorch engine.
             PtEngineProvider provider = new PtEngineProvider();
             Engine engine = provider.getEngine();
             
-            if (engine == null) {
-                throw new RuntimeException("Failed to get PyTorch engine from provider");
+            if ( engine == null ) {
+            	message = "Failed to get PyTorch engine from provider.";
+   	   			Message.printWarning(log_level,
+   	   				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+   	   				routine, message );
+   	   			status.addToLog ( commandPhase,
+   	   				new CommandLogRecord(CommandStatusType.FAILURE, 
+   	   					message, "See the log file for information." ) );
+                throw new RuntimeException(message);
             }
             
-            System.out.println("Successfully loaded PyTorch engine: " + engine.getEngineName() + " (Version: " + engine.getVersion() + ")");
+            Message.printStatus(2,routine,"Successfully loaded PyTorch engine: " + engine.getEngineName() + " (Version: " + engine.getVersion() + ")");
             
         } catch (Exception e) {
             message = "PyTorch engine failed to initialize: " + e.getMessage();
+  			Message.printWarning(log_level,
+  				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+ 				routine, message );
+   			status.addToLog ( commandPhase,
+   				new CommandLogRecord(CommandStatusType.FAILURE, 
+   					message, "See the log file for information." ) );
             Message.printWarning(3, routine, e);
             throw new CommandException(message);
         }
@@ -308,14 +331,22 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
         int seq_len = 10;
         int weather_features = 12;
 
-        try (Model model = Model.newInstance("water_level_model")) {
-            // Path needs to be a Path object
-            model.load(Paths.get("C:\\Users\\Ortwin\\cdss-dev\\TSTool\\git-repos\\owf-tstool-ai-plugin\\owf-tstool-ai-plugin\\src\\main\\resources")); 
+        // Load the model:
+        // - the name is the name of the model file without the extension ".pt"
+        // - TODO smalers 2025-07-25 this is pretty specific, need to evaluate if this can be generalized more
+        //try (Model model = Model.newInstance("water_level_model")) {
+        String modelName = inputFile.getName().replace(".pt","");
+        try (Model model = Model.newInstance(modelName)) {
+        	// Load the model file from its folder:
+        	// = the path needs to be a Path object
+        	// - this is the parent folder of the model file
+            //model.load(Paths.get("C:\\Users\\Ortwin\\cdss-dev\\TSTool\\git-repos\\owf-tstool-ai-plugin\\owf-tstool-ai-plugin\\src\\main\\resources")); 
+            model.load(Paths.get(inputFile.getParent())); 
 
             Translator<NDList, NDArray> translator = new Translator<NDList, NDArray>() {
                 @Override
                 public NDArray processOutput(TranslatorContext ctx, NDList list) {
-                    System.out.println("Processing model output.");
+                    Message.printStatus(2, routine, "Processing model output.");
                     return list.singletonOrThrow();
                 }
 
@@ -339,8 +370,10 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
                 NDList input = new NDList(historical, futureWeather);
                 NDArray output = predictor.predict(input);
 
-                System.out.println("Model prediction output:");
-                System.out.println(output);
+                //System.out.println("Model prediction output:");
+                //System.out.println(output);
+                Message.printStatus(2,routine,"Model prediction output:");
+                Message.printStatus(2,routine,"" + output);
             }
         }
         
@@ -353,8 +386,8 @@ throws InvalidCommandParameterException, CommandWarningException, CommandExcepti
         MessageUtil.formatMessageTag(command_tag, ++warning_count),routine, message );
         Message.printWarning ( 3, routine, e );
         status.addToLog(CommandPhaseType.RUN,
-                new CommandLogRecord(CommandStatusType.FAILURE,
-                        message, "See the log file for details. Make sure the output file is not open in other software."));
+            new CommandLogRecord(CommandStatusType.FAILURE,
+                message, "See the log file for details. Make sure the output file is not open in other software."));
         throw new CommandException ( message ); // FIX: Use single-argument constructor
     }
 

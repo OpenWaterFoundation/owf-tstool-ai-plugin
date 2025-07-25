@@ -66,6 +66,41 @@ configureEcho() {
   endColor='\e[0m' # To switch back to default color
 }
 
+# Copy the maven dependencies into the plugin's 'dep' folder:
+# - remove the 'dep' folder contents before copy to avoid version conflicts
+copyMavenDependencies() {
+  # First delete the 'dep' folder contents, but leave the folder itself.
+  if [ -d "${pluginDepFolder}" ]; then
+    # Remove all the existing files in the 'dep' folder so only the latest are available at runtime:
+    # - only attempt to remove if not empty - otherwise get a warning
+    # - do not use double quotes around the folder with wildcard
+    if [ ! -z "$(ls -A ${pluginDepFolder})" ]; then
+      rm ${pluginDepFolder}/*
+    fi
+  else
+    # Dependency folder 'dep' does not exist.  Create it.
+    mkdir -p "${pluginDepFolder}"
+  fi
+
+  # Copy the dependency jar files based on Maven listing:
+  # - echoing a variable in double quotes causes the backslashes to be removed so convert to / before passing to linux commands
+  echoStderr "[INFO] Copying jar files for dependencies to:"
+  echoStderr "[INFO]   ${pluginDepFolder}"
+  #mvn -f "${mavenPomFile}" dependency:build-classpath | grep ':' | grep ';' | tr ';' '\n' | tr '\\' '/'
+  #return 0
+  mvn -f "${mavenPomFile}" dependency:build-classpath | grep ':' | grep ';' | tr ';' '\n' | tr '\\' '/' | while read line
+    # The Maven output on Windows from the above is similar to:
+    #   C:\Users\sam\.m2\repository\io\netty\netty-common\4.1.77.Final\netty-common-4.1.77.Final.jar
+    do
+      # Convert to a path consistent with the Linux environment.
+      #echo "Line from mvn: ${line}"
+      linuxPath=$(cygpath -u "${line}")
+      # For debugging.
+      #echo "Linux path: ${linuxPath}"
+      cp -v "${linuxPath}" "${pluginDepFolder}"
+    done
+}
+
 # Echo a string to standard error (stderr).
 # This is done so that TSTool results output printed to stdout is not mixed with stderr.
 # For example, TSTool may be run headless on a server to output to CGI,
@@ -122,7 +157,7 @@ setJavaInstallHome() {
   fi
 
   # Also set JAVA_HOME, needed by Maven.
-  #export JAVA_HOME="${javaInstallHome}"
+  export JAVA_HOME="${javaInstallHome}"
 }
 
 # Main entry point.
@@ -140,8 +175,8 @@ repoFolder=$(dirname ${scriptFolder})
 gitReposFolder=$(dirname ${repoFolder})
 tstoolMainRepoFolder=${gitReposFolder}/cdss-app-tstool-main
 
-#mavenProjectFolder=${repoFolder}/owf-tstool-ai-plugin
-#mavenPomFile=${mavenProjectFolder}/pom.xml
+mavenProjectFolder=${repoFolder}/owf-tstool-ai-plugin
+mavenPomFile=${mavenProjectFolder}/pom.xml
 
 # Get the plugin version, which is used in the jar file name.
 pluginVersion=$(getPluginVersion)
@@ -180,6 +215,7 @@ versionPluginFolder="${mainPluginFolder}/${pluginVersion}"
 jarFile="${versionPluginFolder}/owf-tstool-ai-plugin-${pluginVersion}.jar"
 manifestFile="${repoFolder}/owf-tstool-ai-plugin/src/main/resources/META-INF/MANIFEST.MF"
 
+# Folder for plugin version dependencies.
 pluginDepFolder="${versionPluginFolder}/dep"
 
 # Set the javaInstallHome variable.
@@ -250,5 +286,8 @@ else
   ls -1 ${versionPluginFolder}/*.jar
   exit 1
 fi
+
+# Copy jar file dependencies from Maven to the plugin 'dep' folder.
+copyMavenDependencies
 
 exit 0
