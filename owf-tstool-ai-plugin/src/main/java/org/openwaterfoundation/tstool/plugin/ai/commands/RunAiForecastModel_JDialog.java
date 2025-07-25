@@ -101,19 +101,21 @@ public void actionPerformed( ActionEvent event ) {
 	Object o = event.getSource();
 
     if ( o == __browseInput_JButton ) {
-        String last_directory_selected = JGUIUtil.getLastFileDialogDirectory();
-        JFileChooser fc = null;
-        if ( last_directory_selected != null ) {
-            fc = JFileChooserFactory.createJFileChooser( last_directory_selected );
-        }
-        else {
-            fc = JFileChooserFactory.createJFileChooser( __working_dir );
-        }
-        fc.setDialogTitle("Select Input File");
-        //SimpleFileFilter sff = new SimpleFileFilter("txt", "Text file");
-        //fc.addChoosableFileFilter(sff);
+		// Browse for the file to read.
+		JFileChooser fc = new JFileChooser();
+        fc.setDialogTitle( "Select Model File");
+        SimpleFileFilter pt_ff = new SimpleFileFilter("pt","Model File");
+        fc.addChoosableFileFilter(pt_ff);
+		
+		String last_directory_selected = JGUIUtil.getLastFileDialogDirectory();
+		if ( last_directory_selected != null ) {
+			fc.setCurrentDirectory(	new File(last_directory_selected));
+		}
+		else {
+            fc.setCurrentDirectory(new File(__working_dir));
+		}
 
-        if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String directory = fc.getSelectedFile().getParent();
             String filename = fc.getSelectedFile().getName();
             String path = fc.getSelectedFile().getPath();
@@ -282,7 +284,10 @@ private void initialize ( JFrame parent, RunAiForecastModel_Command command ) {
 	int y = -1;
 
     JGUIUtil.addComponent(main_JPanel, new JLabel (
-		"This runs the AI forecast model, using model input created by the training step." ),
+		"This command runs an AI forecast model using PyTorch, using model input created by the training step." ),
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    JGUIUtil.addComponent(main_JPanel, new JLabel (
+		"The input file is the model file with .pt extension." ),
 		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     if ( __working_dir != null ) {
     	JGUIUtil.addComponent(main_JPanel, new JLabel (
