@@ -2,6 +2,7 @@
 
 Table of Contents
 - [Technical Overview](#technical-overview)
+  - [What Versions and Technologies for which parts?](#what-versions-and-technologies-for-which-parts)
   - [DeepAR LSTM](#deepar-lstm)
   - [DJL](#djl)
   - [PyTorch](#pytorch)
@@ -21,6 +22,16 @@ Table of Contents
     
 
 # Technical Overview
+## What Versions and Technologies for which parts?
+- Using the model
+  - Java => v.11
+  - DJL (Deep Java Library)
+    - ai.djl => v.0.33.0
+    - ai.djl.pytorch(pytorch engine) => v.0.33.0
+  - PyTorch (An underlying framework written in C++) => v.2.5.1
+- Training the model
+  - Python => v.3.8 or higher
+  - PyTorch (An underlying framework written in C++) => v.2.7.1
 ## DeepAR LSTM
 The DeepAR LSTM model is a time series forecasting model that uses Long Short-Term Memory (LSTM) networks to predict future values based on historical data. It is particularly effective for datasets with seasonal patterns and trends.
 ## DJL
@@ -38,7 +49,7 @@ That means that for every timestep the model predicts the water level for the ne
 ## Data
 https://open-meteo.com/en/docs
 I used Open Meteo for the weather data. It has a weather Api for free and it is easy to use.
-It has one for histrical data and one for forecast data.
+It has one for historical data and one for forecast data.
 It has many different parameters you can use.
 
 I  used the following parameters for the historical data:
@@ -47,7 +58,7 @@ hourly_units:
 
 - time
 
-- temperature_2m
+- temperature_2m (2 meters above ground level to avoid ground effects)
 
 - precipitation
 
@@ -73,7 +84,7 @@ hourly_units:
 
 - precipitation_probability
 
-The biggest possible time fram should be used for the historical data. The more data the better the model can learn from it.
+The biggest possible historical period should be used for the historical data. The more data the better the model can learn from it.
 The Longitude and Latitude of the location of the water level station should be used to get the weather data for that location.
 So my api call looks like this:
 
@@ -126,7 +137,7 @@ Output format: array of timestamps + predicted values
     - Use `get_water_level_data.tstool` to get the water level data json file.
     - Use the `get_weather_data.py` to get the weather data json file.
 3. **Data Preparation**:
-    - Run the `preprocessing.py` script to merge the water level and weather data into a single file.
+    - Run the `preprocessing.py` script to merge the water level and weather data into a single file in the form of a compressed NumPy archive file `processed_data.npz`.
 4. **Model Training**:
     - Use the `train.py` script to train the DeepAR LSTM model with the prepared data.
 5. **Model Conversion**:
@@ -146,6 +157,8 @@ It merges the weather data and the water level data into one file that is in the
 It also splits the data into training and test data. So that the model can be evaluated on the test data after training. And not on data it has already seen.
 
 It also creates scalers so when deploying the model we can scale the input data to the same range as the training data.
+
+It creates 67 days windows which move 24 hours forward for each timestep.
 
 
 ## Training
