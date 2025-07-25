@@ -1,0 +1,25 @@
+#Specify formatting for column cells based on values
+"Column","Condition","Display","StyleID"
+"Enabled","${tablecell:value} == FALSE","Disabled","EnabledFalse"
+"Enabled","${tablecell:value} == TRUE","Enabled","EnabledTrue"
+#
+"Test Pass/Fail","${tablecell:value} == FAIL","FAIL","TestFailed"
+"Test Pass/Fail","${tablecell:value} == PASS","PASS","TestPassed"
+# Tests are case-specific
+"Commands Expected Status","${tablecell:value} == SUCCESS","ExpectedStatusSuccess","ExpectedStatusSuccess"
+"Commands Expected Status","${tablecell:value} == Success","ExpectedStatusSuccess","ExpectedStatusSuccess"
+"Commands Expected Status","${tablecell:value} == FAILURE","ExpectedStatusFailure","ExpectedStatusFailure"
+"Commands Expected Status","${tablecell:value} == Failure","ExpectedStatusFailure","ExpectedStatusFailure"
+"Commands Expected Status","${tablecell:value} == WARNING","ExpectedStatusWarning","ExpectedStatusWarning"
+"Commands Expected Status","${tablecell:value} == Warning","ExpectedStatusWarning","ExpectedStatusWarning"
+"Commands Expected Status","${tablecell:value} == warning","ExpectedStatusWarning","ExpectedStatusWarning"
+"Commands Actual Status","${tablecell:value} == SUCCESS","ExpectedStatusSuccess","ExpectedStatusSuccess"
+"Commands Actual Status","${tablecell:value} == Success","ExpectedStatusSuccess","ExpectedStatusSuccess"
+"Commands Actual Status","${tablecell:value} == FAILURE","ExpectedStatusFailure","ExpectedStatusFailure"
+"Commands Actual Status","${tablecell:value} == Failure","ExpectedStatusFailure","ExpectedStatusFailure"
+"Commands Actual Status","${tablecell:value} == WARNING","ExpectedStatusWarning","ExpectedStatusWarning"
+"Commands Actual Status","${tablecell:value} == Warning","ExpectedStatusWarning","ExpectedStatusWarning"
+"Commands Actual Status","${tablecell:value} == warning","ExpectedStatusWarning","ExpectedStatusWarning"
+# Check for commands that seem to be overly slow
+"Run Time (ms)","${tablecell:value} > 500","SlowCommand","SlowCommand"
+"Run Time (ms)","${tablecell:value} > 2000","ReallySlowCommand","ReallySlowCommand"

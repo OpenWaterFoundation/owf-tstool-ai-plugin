@@ -1,0 +1,7 @@
+StartLog(LogFile="results/test-RunAiForecastModel-PoudreRiver-water-level.tstool.log")
+#
+# This example runs a model to forecast water level for the Poudre River in Colorado.
+# The PyTorch AI package is used for modeling.
+# The model must have been previously created with training data.
+# The 'water_level_model.pt' file is large and is not saved in the repository.
+RunAiForecastModel(InputFile="water_level_model.pt")

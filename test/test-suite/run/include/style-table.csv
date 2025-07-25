@@ -1,0 +1,14 @@
+# Style table for formatting test results
+"StyleID","FillForegroundColor"
+"EnabledFalse","Yellow"
+"EnabledTrue","102,255,51"
+#
+"TestPassed","102,255,51"
+"TestFailed","Red"
+#
+"ExpectedStatusSuccess","102,255,51"
+"ExpectedStatusWarning","Yellow"
+"ExpectedStatusFailure","Red"
+#
+"SlowCommand","Yellow"
+"ReallySlowCommand","Red"
