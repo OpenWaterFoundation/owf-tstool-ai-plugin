@@ -1,5 +1,25 @@
 # Documentation for the Handover
 
+Table of Contents
+- [Technical Overview](#technical-overview)
+  - [DeepAR LSTM](#deepar-lstm)
+  - [DJL](#djl)
+  - [PyTorch](#pytorch)
+  - [Model](#model)
+- [Using the model](#using-the-model)
+  - [Data](#data)
+    - [DJL Integration](#djl-integration)
+    - [Inference](#inference)
+      - [Input Requirements](#input-requirements)
+      - [Output](#output)
+- [Training the model](#training-the-model)
+  - [Step by Step Guide](#step-by-step-guide)   
+    - [Data](#data-1)
+    - [Data preparation](#data-preparation)
+    - [Training](#training)
+    - [Converting the model](#converting-the-model)
+    
+
 # Technical Overview
 ## DeepAR LSTM
 The DeepAR LSTM model is a time series forecasting model that uses Long Short-Term Memory (LSTM) networks to predict future values based on historical data. It is particularly effective for datasets with seasonal patterns and trends.
@@ -88,6 +108,30 @@ Output format: array of timestamps + predicted values
 
 
 # Training the model
+
+
+
+## Step by Step Guide
+1. **Environment Setup**:
+    - open a terminal in the `owf-tstool-ai-training` folder
+    - Ensure you have Python 3.8 or higher installed.
+    - create a virtual environment with `python -m venv venv`
+    - Activate the virtual environment:
+        - On Windows: `venv\Scripts\activate`
+        - On macOS/Linux: `source venv/bin/activate`
+    - Install the required packages using `pip install -r requirements.txt`
+    - Ensure you have TSTool installed and configured for data collection.
+     
+2. **Data Collection**:
+    - Use `get_water_level_data.tstool` to get the water level data json file.
+    - Use the `get_weather_data.py` to get the weather data json file.
+3. **Data Preparation**:
+    - Run the `preprocessing.py` script to merge the water level and weather data into a single file.
+4. **Model Training**:
+    - Use the `train.py` script to train the DeepAR LSTM model with the prepared data.
+5. **Model Conversion**:
+    - Use the `convert.py` script to convert the trained PyTorch model to a format compatible with DJL.
+    - If you changed the Parameters in "train.py", like hidden_size, make sure to update the conversion script accordingly.
 
 ## Data
 For the weather data we use the same api provider but the historical data api.

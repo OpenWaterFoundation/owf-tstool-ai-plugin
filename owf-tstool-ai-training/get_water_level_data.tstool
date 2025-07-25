@@ -1,0 +1,2 @@
+ReadNovaStar(DataStore="nsdataws-larimer",EditorDataStore="nsdataws-larimer",DataType="WaterLevelRiver",Interval="IrregSecond",LocId="11516",InputStart="2022")
+WriteTimeSeriesToJson(OutputFile="..\..\..\Users\Ortwin\cdss-dev\TSTool\git-repos\owf-tstool-ai-plugin\owf-tstool-ai-training\water_data.json")

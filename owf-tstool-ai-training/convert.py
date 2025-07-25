@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-from training_30 import ImprovedWaterLevelModel
+from training import ImprovedWaterLevelModel
 
 # Load processed data to get feature_names and sequence length
 data = np.load('./processed_data.npz', allow_pickle=True)
@@ -13,7 +13,7 @@ X_hist_train = data['X_hist_train']
 seq_len = X_hist_train.shape[1]
 
 # Model parameters (match training_30.py)
-hidden_size = 96
+hidden_size = 64
 num_layers = 3
 dropout = 0.25
 

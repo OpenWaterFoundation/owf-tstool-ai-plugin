@@ -3,6 +3,7 @@
 *.pth
 *.pt
 
+venv/
 
 # List of files to ignore globally in the repository.
 
@@ -36,4 +37,4 @@
 
 # Target files created by Eclipse/Maven.
 
-/owf-tstool-plugin/owf-tstool-timesheetscom-plugin/target/**
+__pycache__
