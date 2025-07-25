@@ -1,0 +1,13 @@
+#
+# ----------- start of end file ---------------------
+# Command file to finish the automated tests:
+# - output files use current time as ${NowString} from main command file so can compare test results over time
+# - write the summary table to CSV and Excel files
+# - specify a results folder in the location where the test suite will be run
+WriteTableToDelimitedFile(TableID="TestResults",OutputFile="results/run-test-suite-out-${NowString}.csv",WriteHeaderComments="False")
+ReadTableFromDelimitedFile(TableID="StyleTable",InputFile="include/style-table.csv")
+ReadTableFromDelimitedFile(TableID="ConditionTable",InputFile="include/condition-table.csv")
+NewExcelWorkbook(OutputFile="results/run-test-suite-out-${NowString}.xlsx",Worksheets="TestResults",KeepOpen="True")
+SetExcelWorksheetViewProperties(OutputFile="results/run-test-suite-out-${NowString}.xlsx",Worksheet="TestResults",KeepOpen="True",FreezePaneRowBelowSplit="2")
+WriteTableToExcel(TableID="TestResults",OutputFile="results/run-test-suite-out-${NowString}.xlsx",Worksheet="TestResults",ExcelAddress="A1",ExcelColumnNames="FirstRowInRange",ColumnWidths="Default:Auto",ConditionTableID="ConditionTable",StyleTableID="StyleTable")
+# ----------- end of end file ---------------------

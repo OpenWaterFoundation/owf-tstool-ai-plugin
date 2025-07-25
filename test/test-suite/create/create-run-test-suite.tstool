@@ -1,0 +1,16 @@
+StartLog(LogFile="results/create-run-test-suite.tstool.log")
+#
+# Create the run command file for the test suite.
+#
+# Generate RunCommands() commands for all tests.
+# Command files that start with 'Test_' (old naming convention) and
+# 'test-' (new naming convention) are included in the output.
+#
+# =======================================================================================================
+# The following test suites are excluded during normal development to avoid slow tests:
+#
+# - no tests are currently excluded
+#
+#  See the repository issues for outstanding test problems.
+# =======================================================================================================
+CreateRegressionTestCommandFile(SearchFolder="../../commands",OutputFile="../run/run-test-suite.tstool",SetupCommandFile="include/create-run-test-suite-setup.tstool",TestResultsFile="results/create-run-test-suite-out-${NowString}.txt",EndCommandFile="include/create-run-test-suite-end.tstool",Append="False",IncludeTestSuite="*",TestResultsTableID="TestResults")

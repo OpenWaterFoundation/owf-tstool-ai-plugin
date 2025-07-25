@@ -1,0 +1,10 @@
+#
+# ------- start of setup file ------
+# Command file to set up the environment the test suite.
+# This command file should be read in at the start of the test suite
+# and then the remaining tests can share the environment.
+#
+# Get the current time to use in output files.
+SetProperty(PropertyName="Now",PropertyType="DateTime",PropertyValue="CurrentToMinute")
+FormatDateTimeProperty(PropertyName="NowString",DateTimePropertyName="Now",Format="%Y%m%d%H%M")
+# ------- end of setup file ------

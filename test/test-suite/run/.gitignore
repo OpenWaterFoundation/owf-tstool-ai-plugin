@@ -1,0 +1,5 @@
+# Files to ignore and not commit to the repository:
+# - see also the 'results/.gitignore' file
+
+# The following is created by the ../create/create-run-test-suite.tstool command file.
+run-test-suite.tstool
